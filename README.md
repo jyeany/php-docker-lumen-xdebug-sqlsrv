@@ -2,7 +2,7 @@
 
 ## Overview
 Docker container with apache 2 server configured with xdebug to provide a quick start and consistent environment for Lumen
-framework development. Files created for the Lumen application will by synced with the */app* folder.
+framework development. Files created for the Lumen application will by synced with the */src* folder.
 
 ## Running the Containers
 Start containers with:
@@ -57,9 +57,9 @@ APP_TIMEZONE=UTC
 LOG_CHANNEL=stack
 LOG_SLACK_WEBHOOK_URL=
 
-DB_CONNECTION=pgsql
-DB_HOST=lumen-postgres
-DB_PORT=5432
+DB_CONNECTION=sqlsrv
+DB_HOST=lumen-sqlsrv
+DB_PORT=1433
 DB_DATABASE=<db-name-here>
 DB_USERNAME=<db-user-here>
 DB_PASSWORD=<db-user-password>
@@ -76,10 +76,15 @@ $app->withFacades();
 ## Adjust the Configuration
 Find your ip address using *ifconfig* or *ipconfig*  
 
-Replace the ip address in *docker-php-ext-xdebug.ini* with your ip address
+Set the environment variables for xdebug settings
+see *Dockerfile* for example:
 ```
-xdebug.remote_host=<your-ip-address-here>
-``` 
+XDEBUG_REMOTE_ENABLE: 1
+XDEBUG_REMOTE_CONNECT_BACK: 0
+XDEBUG_REMOTE_AUTOSTART: 1 
+XDEBUG_REMOTE_HOST: <your-ip-address>
+XDEBUG_REMOTE_PORT: 9000 
+```
   
 Changes to the ini file require a stop/start to be reflected.
 Changes to in the */src* directory sync automatically.  
@@ -100,7 +105,7 @@ https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug
     "request": "launch",
     "port": 9000,    
     "pathMappings": {
-        "/var/www/html": "${workspaceRoot}/src"    
+        "/var/www/site": "${workspaceRoot}/src"    
     }
 }
 ```
@@ -110,7 +115,7 @@ https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug
 The *phpunit* executable is not added to the path automatically by the *composer create-project* command.  
 In order to have it accessible without adding its path within the project, */vendor/bin/phpunit*, use the following:
 ```
-ln -s /var/www/html/<your-app-name>/vendor/bin/phpunit /usr/local/bin/phpunit
+ln -s /var/www/site/<your-app-name>/vendor/bin/phpunit /usr/local/bin/phpunit
 ```
 
 Unit tests can be debugged using the same launch.json as the application, just run *phpunit* and place a breakpoint.

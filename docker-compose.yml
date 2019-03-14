@@ -1,12 +1,18 @@
 version: '3.7'
 services:
   lumen-api-sqlsrv:
-    image: "jyeany/php-sqlsrv-xdebug:latest"
+    build: .
     container_name: lumen-api-sqlsrv
+    environment:
+      XDEBUG_REMOTE_ENABLE: 1
+      XDEBUG_REMOTE_CONNECT_BACK: 0
+      XDEBUG_REMOTE_AUTOSTART: 1 
+      XDEBUG_REMOTE_HOST: <your-ip-address>
+      XDEBUG_REMOTE_PORT: 9000 
     ports:
       - "5000:80"
     volumes:
-      - ./src:/var/www/html/site 
+      - ./src:/var/www/site 
     depends_on:
       - lumen-sqlsrv 
   lumen-sqlsrv:
